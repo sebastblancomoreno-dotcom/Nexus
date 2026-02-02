@@ -1,0 +1,6 @@
+com\synthnexus\catalog\repository\ProductRepository.class
+com\synthnexus\catalog\model\Product$ProductBuilder.class
+com\synthnexus\catalog\controller\ProductController.class
+com\synthnexus\catalog\model\Product$Category.class
+com\synthnexus\catalog\CatalogServiceApplication.class
+com\synthnexus\catalog\model\Product.class

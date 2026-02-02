@@ -1,0 +1,82 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    container_name: nexus-postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: catalog_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - nexus-network
+
+  discovery-service:
+    build: backend/discovery-service
+    container_name: discovery-service
+    ports:
+      - "8761:8761"
+    networks:
+      - nexus-network
+
+  catalog-service:
+    build: backend/catalog-service
+    container_name: catalog-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/catalog_db
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - EUREKA_INSTANCE_HOSTNAME=catalog-service
+    depends_on:
+      - postgres
+      - discovery-service
+    networks:
+      - nexus-network
+
+  api-gateway:
+    build: backend/api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - EUREKA_INSTANCE_HOSTNAME=api-gateway
+    depends_on:
+      - discovery-service
+    networks:
+      - nexus-network
+
+  frontend:
+    build: frontend
+    container_name: synth-nexus-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - nexus-network
+
+  mongodb:
+    image: mongo:6.0
+    container_name: nexus-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - nexus-network
+
+networks:
+  nexus-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongo_data:
