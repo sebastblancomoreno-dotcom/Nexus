@@ -1,39 +1,39 @@
 <div class="bg-synth-dark min-h-screen p-8 text-gray-200">
   <div class="max-w-4xl mx-auto">
     <!-- Navigation -->
-    <a routerLink="/"
-      class="text-synth-neon hover:text-cyan-400 mb-8 inline-block flex items-center gap-2 group transition-colors"
-      id="back-to-catalog">
-      <span class="group-hover:-translate-x-1 transition-transform">←</span> Back to Catalog
+    <a routerLink="/" class="nav-back-link" id="back-to-catalog">
+      <span class="group-hover:-translate-x-1 transition-transform">←</span>
+      <span>Back to Catalog</span>
     </a>
 
     @if (loading()) {
     <div class="flex flex-col items-center justify-center py-20 animate-pulse">
       <div class="text-6xl mb-4">🎹</div>
-      <p class="text-xl text-gray-500">Retrieving technical specs...</p>
+      <p class="text-xl text-gray-400 font-bold">Retrieving technical specs...</p>
     </div>
     } @else if (error()) {
     <div class="bg-red-900/20 border border-red-500/50 p-6 rounded-xl text-center">
       <h2 class="text-2xl font-bold text-red-500 mb-2">Error 404</h2>
-      <p class="text-gray-400">{{ error() }}</p>
+      <p class="text-gray-400 font-black">{{ error() }}</p>
     </div>
     } @else {
     @if (product(); as p) {
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 bg-[#1e1e1e] rounded-2xl p-8 border border-gray-800 shadow-2xl">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 bg-[#1e1e1e] rounded-2xl p-12 border border-gray-800 shadow-2xl">
       <!-- Image & Demo Section -->
       <div>
         <div
-          class="bg-gray-900 rounded-xl overflow-hidden aspect-square flex items-center justify-center text-8xl mb-6 border border-gray-800">
-          🎹
+          class="bg-gray-900 rounded-xl overflow-hidden aspect-square flex items-center justify-center text-8xl mb-8 border border-gray-800 group relative">
+          <img [src]="p.imageUrl" [alt]="p.name"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
         </div>
 
         @if (p.demoUrl) {
-        <div class="bg-black/40 p-4 rounded-xl border border-synth-neon/20">
-          <h4 class="text-synth-neon font-mono text-xs uppercase mb-3 tracking-widest">Digital Audio Demo</h4>
-          <div class="bg-gray-800 h-10 rounded-full flex items-center px-4 justify-between">
-            <span class="text-xs text-gray-400">preview_session_v1.mp3</span>
-            <button class="text-synth-neon hover:scale-110 transition-transform">▶</button>
-          </div>
+        <div class="detail-demo-spacing">
+          <button (click)="showDemo.set(true)"
+            class="w-full btn-minimal !py-7 !text-xl !rounded-2xl group flex items-center justify-center gap-4">
+            <span class="text-black text-2xl group-hover:scale-110 transition-transform">▶</span>
+            <span class="text-xl font-black tracking-[0.2em] uppercase">Demo</span>
+          </button>
         </div>
         }
       </div>
@@ -41,42 +41,98 @@
       <!-- Details Section -->
       <div class="flex flex-col">
         <div class="mb-6">
-          <span class="text-synth-accent font-mono text-sm tracking-tighter uppercase mb-1 block">{{ p.brand }}</span>
+          <span
+            class="text-synth-accent font-mono text-[10px] text-xs uppercase tracking-[0.4em] mb-1 block font-black">{{
+            p.brand }}</span>
           <h1 class="text-4xl font-extrabold text-white mb-2 underline decoration-synth-neon/30">{{ p.name }}</h1>
           <div
-            class="inline-block bg-synth-neon/10 text-synth-neon px-3 py-1 rounded-full text-xs font-bold border border-synth-neon/30">
+            class="inline-block bg-synth-neon/10 text-synth-neon px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase border border-synth-neon/30">
             {{ p.category }}
           </div>
         </div>
 
-        <div class="text-3xl font-bold text-white mb-6">
+        <div class="text-3xl font-bold text-white mb-8">
           ${{ p.price }}
-          <span class="text-xs text-gray-500 font-light block mt-1">Free worldwide shipping on Eurorack</span>
+          <span class="text-[10px] text-gray-400 font-black block mt-2 uppercase tracking-[0.2em]">Free worldwide
+            shipping</span>
         </div>
 
-        <div class="prose prose-invert mb-8">
-          <h4 class="text-gray-400 text-sm font-mono uppercase tracking-widest mb-2 border-b border-gray-800 pb-1">
-            Specifications</h4>
-          <p class="text-gray-300 leading-relaxed">{{ p.description }}</p>
+        <div class="prose prose-invert mb-10">
+          <h4
+            class="text-gray-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4 border-b border-gray-800 pb-2">
+            Technical Specifications</h4>
+          <p class="text-gray-300 leading-relaxed font-bold">{{ p.description }}</p>
         </div>
 
-        <div class="mt-auto space-y-4">
-          <div class="flex items-center justify-between text-sm">
-            <span class="text-gray-500">Stock Status:</span>
+        <div class="mt-auto pt-8 border-t border-gray-800/50"> <!-- Added pt-8 and border-t for clear separation -->
+          <div class="flex items-center justify-between text-[11px] font-black uppercase tracking-[0.1em] mb-8">
+            <!-- Increased mb-6 to mb-8 -->
+            <span class="text-gray-500">Stock Availability:</span>
             @if (p.stock > 0) {
-            <span class="text-green-500 font-bold">● In Stock ({{ p.stock }} units)</span>
+            <span class="text-green-500">● In Stock ({{ p.stock }} units)</span>
             } @else {
-            <span class="text-red-500 font-bold">○ Out of Stock</span>
+            <span class="text-red-500">○ Out of Stock</span>
             }
           </div>
 
-          <button
-            class="w-full bg-gradient-to-r from-synth-neon to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-black py-4 rounded-xl transition-all shadow-xl shadow-cyan-500/20 active:scale-95 text-lg uppercase tracking-wider">
-            Add to Studio Setup
-          </button>
+          <div class="detail-buy-spacing">
+            <button class="w-full btn-minimal !py-7 !text-xl !rounded-2xl">
+              Add to Studio Setup
+            </button>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- REFINED IMMERSIVE MODAL -->
+    @if (showDemo()) {
+    <div class="immersive-modal-container">
+      <div class="modal-backdrop" [class.closing]="isClosing()" (click)="closeModal()"></div>
+
+      <div class="modal-content-wrapper shadow-2xl" [class.closing]="isClosing()">
+
+        <div class="modal-header">
+          <div class="flex flex-col gap-2">
+            <span class="text-[#ff0055] font-mono text-[10px] uppercase tracking-[0.5em] font-black leading-none">{{
+              p.brand }}</span>
+            <h2 class="text-4xl font-black text-gray-900 m-0 tracking-tighter leading-none">{{ p.name }} Session</h2>
+          </div>
+          <button (click)="closeModal()" class="modal-close-btn">
+            &times;
+          </button>
+        </div>
+
+        <div class="video-container">
+          <div class="video-wrapper">
+            <iframe [src]="p.demoUrl | safe:'resourceUrl'" scrolling="no" frameborder="no" allow="autoplay"></iframe>
+          </div>
+        </div>
+
+        <!-- Footer with Centered Price Stack -->
+        <div class="modal-footer">
+          <div class="flex flex-col gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div>
+              <p class="text-[11px] text-gray-900 uppercase font-black m-0 tracking-[0.2em]">Studio Connection: Active
+              </p>
+            </div>
+            <p class="text-[9px] text-gray-400 uppercase font-black m-0 tracking-[0.3em]">Esc to terminate transmission
+            </p>
+          </div>
+
+          <div class="price-buy-stack">
+            <div class="flex flex-col items-center">
+              <span class="text-[10px] text-gray-400 uppercase font-black tracking-[0.3em] mb-1">MSRP UNIT</span>
+              <span class="text-4xl font-black text-gray-900 tracking-tighter leading-none mb-3">${{ p.price }}</span>
+            </div>
+            <button class="btn-minimal btn-minimal-dark">
+              Buy Unit
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
     }
     }
   </div>

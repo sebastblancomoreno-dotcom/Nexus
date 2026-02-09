@@ -1,56 +1,100 @@
 <div class="bg-synth-dark min-h-screen p-8 text-gray-200">
   <header class="mb-12 text-center">
-    <h1 class="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-synth-neon to-synth-accent">
+    <h1
+      class="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-synth-neon to-synth-accent tracking-tighter">
       SynthNexus
     </h1>
-    <p class="mt-4 text-xl text-gray-400 tracking-wide">Premium Electronic Instruments</p>
+    <p class="mt-4 text-xl text-gray-400 tracking-[0.2em] uppercase font-black">Premium Electronic Instruments</p>
   </header>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  <div class="product-grid">
     @for (product of products(); track product.id) {
     <div [routerLink]="['/product', product.id]"
-      class="cursor-pointer bg-[#1e1e1e] rounded-xl overflow-hidden shadow-lg hover:shadow-synth-neon/20 transition-all duration-300 border border-gray-800 hover:border-synth-neon/50 group">
-      <div class="h-48 overflow-hidden relative">
-        <img [src]="product.imageUrl" [alt]="product.name"
-          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-        <div
-          class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        </div>
-        <div
-          class="absolute top-2 right-2 bg-black/70 px-2 py-1 rounded text-xs font-mono text-synth-neon border border-synth-neon/30">
-          {{ product.category }}
-        </div>
+      class="cursor-pointer bg-[#1e1e1e] rounded-2xl overflow-hidden shadow-xl hover:shadow-synth-neon/10 transition-all duration-500 border border-gray-800 hover:border-gray-700 group flex flex-col">
+      <div class="product-image-container">
+        <img [src]="product.imageUrl" [alt]="product.name">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#1e1e1e] via-transparent to-transparent opacity-60"></div>
       </div>
 
-      <div class="p-6">
-        <div class="flex justify-between items-start mb-2">
+      <div class="product-card-content"> <!-- Significant breathing space for buttons -->
+        <div
+          class="category-tag bg-black/80 px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest text-synth-neon uppercase border border-synth-neon/30 backdrop-blur-md w-fit">
+          {{ product.category }}
+        </div>
+        <div class="flex justify-between items-start mb-4">
           <div>
-            <h3 class="text-2xl font-bold text-gray-100 group-hover:text-synth-neon transition-colors">{{ product.name
-              }}</h3>
-            <p class="text-sm text-gray-400 font-mono">{{ product.brand }}</p>
+            <span class="text-[10px] text-synth-accent font-black tracking-[0.3em] uppercase block mb-1">{{
+              product.brand }}</span>
+            <h3 class="text-2xl font-black text-white group-hover:text-synth-neon transition-colors tracking-tight">{{
+              product.name }}</h3>
           </div>
-          <span class="text-xl font-bold text-synth-accent">${{ product.price }}</span>
+          <span class="text-2xl font-black text-white">${{ product.price }}</span>
         </div>
 
-        <p class="text-gray-400 text-sm mb-4 line-clamp-2 h-10">{{ product.description }}</p>
+        <p class="text-gray-400 text-sm mb-10 line-clamp-2 h-10 leading-relaxed font-bold">{{ product.description }}</p>
 
-        <div class="flex gap-2">
-          <button
-            class="flex-1 bg-synth-dark border border-gray-700 hover:bg-gray-800 text-white py-2 px-4 rounded transition-colors text-sm font-semibold">
-            ▶ Demo
+        <div class="button-container-spacing"> <!-- Significantly increased gap for better breathing space -->
+          <button (click)="openDemo($event, product)" class="flex-1 btn-minimal !px-0">
+            <span class="text-black text-lg mr-2">▶</span> Demo
           </button>
-          <button
-            class="flex-1 bg-gradient-to-r from-synth-neon to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black py-2 px-4 rounded transition-all transform active:scale-95 text-sm font-bold shadow-lg shadow-cyan-500/20">
+          <button class="flex-1 btn-minimal !px-0">
             Add to Cart
           </button>
         </div>
       </div>
     </div>
     } @empty {
-    <div class="col-span-full text-center py-20 text-gray-500">
-      <p class="text-2xl">Loading the sonic arsenal...</p>
-      <p class="text-sm mt-2">(Make sure the backend is running)</p>
+    <div class="col-span-full text-center py-32 text-gray-500">
+      <div class="text-6xl mb-6 animate-pulse">🎹</div>
+      <p class="text-2xl font-black tracking-widest uppercase">Synchronizing Catalog...</p>
     </div>
     }
   </div>
+
+  <!-- IMMERSIVE MODAL (Shared Logic) -->
+  @if (showDemo() && selectedProduct(); as p) {
+  <div class="immersive-modal-container">
+    <div class="modal-backdrop" [class.closing]="isClosing()" (click)="closeModal()"></div>
+
+    <div class="modal-content-wrapper shadow-2xl" [class.closing]="isClosing()">
+
+      <div class="modal-header">
+        <div class="flex flex-col gap-2">
+          <span class="text-[#ff0055] font-mono text-[10px] uppercase tracking-[0.4em] font-black leading-none">{{
+            p.brand }}</span>
+          <h2 class="text-4xl font-black text-gray-900 m-0 tracking-tighter leading-none">{{ p.name }} Session</h2>
+        </div>
+        <button (click)="closeModal()" class="modal-close-btn">
+          &times;
+        </button>
+      </div>
+
+      <div class="video-container">
+        <div class="video-wrapper">
+          <iframe [src]="p.demoUrl | safe:'resourceUrl'" scrolling="no" frameborder="no" allow="autoplay"></iframe>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+            <p class="text-sm text-gray-900 uppercase font-black m-0 tracking-widest">Studio Connection: Active</p>
+          </div>
+          <p class="text-xs text-gray-400 uppercase font-black m-0 tracking-widest">Esc to terminate session</p>
+        </div>
+
+        <div class="price-buy-stack">
+          <div class="flex flex-col items-center">
+            <span class="text-[11px] text-gray-400 uppercase font-black tracking-[0.2em] mb-1">MSRP UNIT</span>
+            <span class="text-4xl font-black text-gray-900 tracking-tighter leading-none mb-2">${{ p.price }}</span>
+          </div>
+          <button class="btn-minimal btn-minimal-dark" [routerLink]="['/product', p.id]" (click)="showDemo.set(false)">
+            Buy Unit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
 </div>

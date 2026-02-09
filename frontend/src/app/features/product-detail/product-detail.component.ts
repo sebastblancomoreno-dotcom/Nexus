@@ -1,13 +1,14 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CatalogService, Product } from '../../core/services/catalog.service';
 import { switchMap } from 'rxjs';
+import { SafePipe } from '../../shared/pipes/safe.pipe';
 
 @Component({
     selector: 'app-product-detail',
     standalone: true,
-    imports: [CommonModule, RouterLink],
+    imports: [CommonModule, RouterLink, SafePipe],
     templateUrl: './product-detail.component.html',
 })
 export class ProductDetailComponent implements OnInit {
@@ -17,6 +18,23 @@ export class ProductDetailComponent implements OnInit {
     product = signal<Product | null>(null);
     loading = signal(true);
     error = signal<string | null>(null);
+    showDemo = signal(false);
+    isClosing = signal(false);
+
+    @HostListener('window:keydown.escape')
+    handleKeyDown() {
+        this.closeModal();
+    }
+
+    closeModal() {
+        if (!this.showDemo()) return;
+        this.isClosing.set(true);
+        setTimeout(() => {
+            this.showDemo.set(false);
+            this.isClosing.set(false);
+        }, 400); // Matches fadeOutBlur animation duration
+    }
+
 
     ngOnInit(): void {
         this.route.paramMap.pipe(
