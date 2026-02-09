@@ -8,8 +8,8 @@
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
     @for (product of products(); track product.id) {
-    <div
-      class="bg-[#1e1e1e] rounded-xl overflow-hidden shadow-lg hover:shadow-synth-neon/20 transition-all duration-300 border border-gray-800 hover:border-synth-neon/50 group">
+    <div [routerLink]="['/product', product.id]"
+      class="cursor-pointer bg-[#1e1e1e] rounded-xl overflow-hidden shadow-lg hover:shadow-synth-neon/20 transition-all duration-300 border border-gray-800 hover:border-synth-neon/50 group">
       <div class="h-48 overflow-hidden relative">
         <img [src]="product.imageUrl" [alt]="product.name"
           class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">

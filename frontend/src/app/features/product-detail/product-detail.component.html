@@ -1,0 +1,83 @@
+<div class="bg-synth-dark min-h-screen p-8 text-gray-200">
+  <div class="max-w-4xl mx-auto">
+    <!-- Navigation -->
+    <a routerLink="/"
+      class="text-synth-neon hover:text-cyan-400 mb-8 inline-block flex items-center gap-2 group transition-colors"
+      id="back-to-catalog">
+      <span class="group-hover:-translate-x-1 transition-transform">←</span> Back to Catalog
+    </a>
+
+    @if (loading()) {
+    <div class="flex flex-col items-center justify-center py-20 animate-pulse">
+      <div class="text-6xl mb-4">🎹</div>
+      <p class="text-xl text-gray-500">Retrieving technical specs...</p>
+    </div>
+    } @else if (error()) {
+    <div class="bg-red-900/20 border border-red-500/50 p-6 rounded-xl text-center">
+      <h2 class="text-2xl font-bold text-red-500 mb-2">Error 404</h2>
+      <p class="text-gray-400">{{ error() }}</p>
+    </div>
+    } @else {
+    @if (product(); as p) {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 bg-[#1e1e1e] rounded-2xl p-8 border border-gray-800 shadow-2xl">
+      <!-- Image & Demo Section -->
+      <div>
+        <div
+          class="bg-gray-900 rounded-xl overflow-hidden aspect-square flex items-center justify-center text-8xl mb-6 border border-gray-800">
+          🎹
+        </div>
+
+        @if (p.demoUrl) {
+        <div class="bg-black/40 p-4 rounded-xl border border-synth-neon/20">
+          <h4 class="text-synth-neon font-mono text-xs uppercase mb-3 tracking-widest">Digital Audio Demo</h4>
+          <div class="bg-gray-800 h-10 rounded-full flex items-center px-4 justify-between">
+            <span class="text-xs text-gray-400">preview_session_v1.mp3</span>
+            <button class="text-synth-neon hover:scale-110 transition-transform">▶</button>
+          </div>
+        </div>
+        }
+      </div>
+
+      <!-- Details Section -->
+      <div class="flex flex-col">
+        <div class="mb-6">
+          <span class="text-synth-accent font-mono text-sm tracking-tighter uppercase mb-1 block">{{ p.brand }}</span>
+          <h1 class="text-4xl font-extrabold text-white mb-2 underline decoration-synth-neon/30">{{ p.name }}</h1>
+          <div
+            class="inline-block bg-synth-neon/10 text-synth-neon px-3 py-1 rounded-full text-xs font-bold border border-synth-neon/30">
+            {{ p.category }}
+          </div>
+        </div>
+
+        <div class="text-3xl font-bold text-white mb-6">
+          ${{ p.price }}
+          <span class="text-xs text-gray-500 font-light block mt-1">Free worldwide shipping on Eurorack</span>
+        </div>
+
+        <div class="prose prose-invert mb-8">
+          <h4 class="text-gray-400 text-sm font-mono uppercase tracking-widest mb-2 border-b border-gray-800 pb-1">
+            Specifications</h4>
+          <p class="text-gray-300 leading-relaxed">{{ p.description }}</p>
+        </div>
+
+        <div class="mt-auto space-y-4">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-500">Stock Status:</span>
+            @if (p.stock > 0) {
+            <span class="text-green-500 font-bold">● In Stock ({{ p.stock }} units)</span>
+            } @else {
+            <span class="text-red-500 font-bold">○ Out of Stock</span>
+            }
+          </div>
+
+          <button
+            class="w-full bg-gradient-to-r from-synth-neon to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-black py-4 rounded-xl transition-all shadow-xl shadow-cyan-500/20 active:scale-95 text-lg uppercase tracking-wider">
+            Add to Studio Setup
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+    }
+  </div>
+</div>

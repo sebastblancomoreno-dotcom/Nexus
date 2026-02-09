@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CatalogService } from '../../core/services/catalog.service';
 
+import { RouterLink } from '@angular/router';
+
 @Component({
     selector: 'app-product-list',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, RouterLink],
     templateUrl: './product-list.component.html',
 })
 export class ProductListComponent {
