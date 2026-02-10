@@ -1,7 +1,7 @@
-import { Component, inject, signal, HostListener } from '@angular/core';
+import { Component, inject, signal, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { CatalogService, Product } from '../../core/services/catalog.service';
+import { LoadingService } from '../../core/services/loading.service';
 
 import { RouterLink } from '@angular/router';
 import { SafePipe } from '../../shared/pipes/safe.pipe';
@@ -12,14 +12,45 @@ import { SafePipe } from '../../shared/pipes/safe.pipe';
     imports: [CommonModule, RouterLink, SafePipe],
     templateUrl: './product-list.component.html',
 })
-export class ProductListComponent {
+export class ProductListComponent implements OnInit {
     private catalogService = inject(CatalogService);
+    loadingService = inject(LoadingService);
 
-    products = toSignal(this.catalogService.getProducts(), { initialValue: [] });
-
+    products = signal<Product[]>([]);
+    loading = signal(true);
     selectedProduct = signal<Product | null>(null);
     showDemo = signal(false);
     isClosing = signal(false);
+
+    ngOnInit() {
+        this.loadingService.show();
+        this.loadProductsWithRetry();
+    }
+
+    private loadProductsWithRetry(attempt: number = 1, maxAttempts: number = 10) {
+        this.catalogService.getProducts().subscribe({
+            next: (data: Product[]) => {
+                this.products.set(data || []);
+                this.loading.set(false);
+                this.loadingService.hide();
+            },
+            error: (err: unknown) => {
+                console.log(`Attempt ${attempt}/${maxAttempts} - Catalog service not ready... (waiting 30s)`);
+
+                if (attempt < maxAttempts) {
+                    // Retry after 30 seconds
+                    setTimeout(() => {
+                        this.loadProductsWithRetry(attempt + 1, maxAttempts);
+                    }, 30000);
+                } else {
+                    // Max attempts reached (5 minutes), show error
+                    console.error('Catalog service unavailable after 5 minutes:', err);
+                    this.loading.set(false);
+                    this.loadingService.hide();
+                }
+            }
+        });
+    }
 
     @HostListener('window:keydown.escape')
     handleKeyDown() {

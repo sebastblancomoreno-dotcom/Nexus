@@ -1,12 +1,12 @@
 <div class="bg-synth-dark min-h-screen p-8 text-gray-200">
-  <header class="mb-12 text-center">
-    <h1
-      class="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-synth-neon to-synth-accent tracking-tighter">
+  <header class="catalog-header">
+    <h1 class="catalog-title">
       SynthNexus
     </h1>
-    <p class="mt-4 text-xl text-gray-400 tracking-[0.2em] uppercase font-black">Premium Electronic Instruments</p>
+    <p class="catalog-subtitle">Premium Electronic Instruments</p>
   </header>
 
+  @if (!loadingService.isLoading()) {
   <div class="product-grid">
     @for (product of products(); track product.id) {
     <div [routerLink]="['/product', product.id]"
@@ -16,19 +16,16 @@
         <div class="absolute inset-0 bg-gradient-to-t from-[#1e1e1e] via-transparent to-transparent opacity-60"></div>
       </div>
 
-      <div class="product-card-content"> <!-- Significant breathing space for buttons -->
-        <div
-          class="category-tag bg-black/80 px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest text-synth-neon uppercase border border-synth-neon/30 backdrop-blur-md w-fit">
-          {{ product.category }}
-        </div>
-        <div class="flex justify-between items-start mb-4">
+      <div class="product-card-content">
+        <span class="category-label !text-[10px] !mb-4">{{ product.category }}</span>
+
+        <div class="flex justify-between items-start mb-6">
           <div>
-            <span class="text-[10px] text-synth-accent font-black tracking-[0.3em] uppercase block mb-1">{{
-              product.brand }}</span>
-            <h3 class="text-2xl font-black text-white group-hover:text-synth-neon transition-colors tracking-tight">{{
-              product.name }}</h3>
+            <span class="brand-label !text-[10px] !mb-1">{{ product.brand }}</span>
+            <h3 class="product-title !text-2xl !mb-0 group-hover:text-synth-neon transition-colors">{{ product.name }}
+            </h3>
           </div>
-          <span class="text-2xl font-black text-white">${{ product.price }}</span>
+          <span class="product-title !text-2xl !mb-0">${{ product.price }}</span>
         </div>
 
         <p class="text-gray-400 text-sm mb-10 line-clamp-2 h-10 leading-relaxed font-bold">{{ product.description }}</p>
@@ -43,17 +40,13 @@
         </div>
       </div>
     </div>
-    } @empty {
-    <div class="col-span-full text-center py-32 text-gray-500">
-      <div class="text-6xl mb-6 animate-pulse">🎹</div>
-      <p class="text-2xl font-black tracking-widest uppercase">Synchronizing Catalog...</p>
-    </div>
     }
   </div>
+  }
 
   <!-- IMMERSIVE MODAL (Shared Logic) -->
   @if (showDemo() && selectedProduct(); as p) {
-  <div class="immersive-modal-container">
+  <div class="immersive-modal-container interactive-modal">
     <div class="modal-backdrop" [class.closing]="isClosing()" (click)="closeModal()"></div>
 
     <div class="modal-content-wrapper shadow-2xl" [class.closing]="isClosing()">

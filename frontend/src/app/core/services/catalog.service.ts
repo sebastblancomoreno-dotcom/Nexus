@@ -9,6 +9,7 @@ export interface Product {
     description: string;
     price: number;
     imageUrl: string;
+    extraImageUrls?: string[];
     demoUrl: string;
     category: 'SYNTHESIZER' | 'DRUM_MACHINE' | 'EURORACK' | 'CONTROLLER';
     stock: number;
