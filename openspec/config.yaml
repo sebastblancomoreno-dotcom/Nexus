@@ -1,0 +1,32 @@
+schema: spec-driven
+
+context: |
+  Project: SynthNexus - Enterprise Microservices Study Environment
+
+  Architecture: Microservices
+  - Discovery Service: Netflix Eureka
+  - API Gateway: Spring Cloud Gateway
+  - Catalog Service: Java Spring Boot + PostgreSQL
+  - Frontend: Angular 17+ (Standalone components) + TailwindCSS
+
+  Infrastructure:
+  - Docker Compose for PostgreSQL and MongoDB
+
+  Tech Stack:
+  - Java 21
+  - Spring Boot 3
+  - Angular 17
+  - TailwindCSS
+  - PostgreSQL
+  - MongoDB
+  - Docker
+
+  Development Environment:
+  - Windows
+  - PowerShell
+
+rules:
+  all:
+    - Use Java 21 features.
+    - Angular components must be Standalone.
+    - Prefer TailwindCSS for styling.

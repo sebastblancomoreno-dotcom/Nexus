@@ -2,11 +2,12 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { LoadingService } from './core/services/loading.service';
+import { ClickSoundDirective } from './shared/directives/click-sound.directive';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule, RouterOutlet, ClickSoundDirective],
   template: `
     @if (loadingService.isLoading()) {
     <div class="loading-overlay">
